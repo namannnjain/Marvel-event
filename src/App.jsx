@@ -1,6 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
-import { Shield, Zap, Terminal, Calendar, MapPin, Users, ChevronRight, AlertTriangle, Cpu, Globe, CheckCircle2, Award, Lock, Volume2, VolumeX } from 'lucide-react';
+import { Shield, Zap, Terminal, Calendar, MapPin, Users, ChevronRight, AlertTriangle, Cpu, Globe, CheckCircle2, Award, Lock, Volume2, VolumeX, Trophy } from 'lucide-react';
+
+// ==========================================
+// FIREBASE CONFIGURATION (Direct from your console)
+// ==========================================
+import { initializeApp } from "firebase/app";
+import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCQX5CFkeqg5ekPPwaTJgLEOI47ad10pjg",
+  authDomain: "assistance-40920.firebaseapp.com",
+  projectId: "assistance-40920",
+  storageBucket: "assistance-40920.firebasestorage.app",
+  messagingSenderId: "77467078510",
+  appId: "1:77467078510:web:f97133273220abbc38fb7f"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 // ==========================================
 // ERROR BOUNDARY COMPONENT
@@ -113,6 +131,15 @@ const customStyles = `
                 inset 0 0 0 1px rgba(236, 29, 36, 0.5);
   }
 
+  .podium-card {
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  .podium-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 40px -10px rgba(234, 179, 8, 0.4),
+                inset 0 0 0 1px rgba(234, 179, 8, 0.6);
+  }
+
   .marvel-btn {
     position: relative;
     overflow: hidden;
@@ -164,9 +191,8 @@ const FuturisticIntro = ({ onComplete }) => {
       audioEl.play().catch(err => console.log("Audio play blocked:", err));
     }
     
-    // Animation duration before white flash
     setTimeout(() => {
-      setPhase('flashing'); // Trigger white flash screen
+      setPhase('flashing');
       setTimeout(() => {
         onComplete();
       }, 600);
@@ -192,7 +218,6 @@ const FuturisticIntro = ({ onComplete }) => {
       transition={{ duration: 0.3 }}
       className="fixed inset-0 z-[100] bg-[#020202] flex flex-col items-center justify-center font-mono overflow-hidden p-6"
     >
-      {/* Rotating Dials & Scanning Lines Background */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-30">
         <motion.div
           animate={{ rotate: 360 }}
@@ -206,7 +231,6 @@ const FuturisticIntro = ({ onComplete }) => {
           transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
           className="absolute w-[350px] h-[350px] rounded-full border border-red-600/60"
         />
-        {/* Moving Laser Scan Line */}
         <motion.div
           animate={{ y: [-200, 200, -200] }}
           transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
@@ -267,8 +291,8 @@ const ScrollCharacters = () => {
   const spiderManY = useTransform(scrollYProgress, [0, 0.3, 0.7, 0.85], [100, 800, 2000, 3500]);
   const spiderManRotate = useTransform(scrollYProgress, [0, 0.3, 0.7, 0.85], [15, -25, 35, -10]);
 
-  const capX = useTransform(scrollYProgress, [0, 1], [200, 600]);
-  const capY = useTransform(scrollYProgress, [0, 1], [400, 1200]);
+  const capX = useTransform(scrollYProgress, [0, 1], [200, 550]);
+  const capY = useTransform(scrollYProgress, [0, 1], [400, 2100]);
 
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden z-25">
@@ -350,12 +374,16 @@ const Navbar = () => {
             INITIATIVE
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-red-600 transition-all duration-300 group-hover:w-full"></span>
           </a>
-          <a href="#register" className="text-gray-300 hover:text-red-500 transition-colors duration-200 relative group py-1">
-            DOSSIER
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-red-600 transition-all duration-300 group-hover:w-full"></span>
+          <a href="#prizes" className="text-yellow-400 hover:text-yellow-300 transition-colors duration-200 relative group py-1 font-bold">
+            PRIZES 🏆
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-yellow-500 transition-all duration-300 group-hover:w-full"></span>
           </a>
           <a href="#schedule" className="text-gray-300 hover:text-red-500 transition-colors duration-200 relative group py-1">
             TIMELINE
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-red-600 transition-all duration-300 group-hover:w-full"></span>
+          </a>
+          <a href="#register" className="text-gray-300 hover:text-red-500 transition-colors duration-200 relative group py-1">
+            DOSSIER
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-red-600 transition-all duration-300 group-hover:w-full"></span>
           </a>
         </div>
@@ -473,6 +501,104 @@ const Highlights = () => {
   );
 };
 
+const PrizesSection = () => {
+  return (
+    <section id="prizes" className="py-24 relative z-10 bg-[#060606] border-t border-white/5 font-mono">
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <div className="bg-glow-gold"></div>
+      </div>
+      
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <div className="text-center mb-16 space-y-4">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 font-semibold text-xs md:text-sm animate-pulse backdrop-blur-md">
+            <Trophy className="w-4 h-4 text-yellow-400" />
+            <span>INFINITY STONES OF VICTORY • REWARDS REPOSITORY</span>
+          </div>
+          <h2 className="marvel-comic-font text-5xl md:text-7xl text-yellow-500 tracking-wider drop-shadow-[0_0_20px_rgba(234,179,8,0.6)]">
+            HALL OF <span className="text-white">CHAMPIONS</span>
+          </h2>
+          <p className="text-gray-400 max-w-xl mx-auto text-sm">
+            He who conquers the multiverse claims ultimate glory and bountiful rewards. Inspect the elite prize tiers below.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-5xl mx-auto items-end my-8">
+          
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="podium-card bg-gradient-to-b from-gray-900 to-black border-2 border-slate-400/40 rounded-2xl p-6 text-center relative shadow-[0_0_30px_rgba(148,163,184,0.15)] order-2 md:order-1 mt-6 md:mt-16"
+          >
+            <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 w-20 h-20 bg-slate-800 rounded-full border-2 border-slate-400 flex items-center justify-center shadow-lg overflow-hidden">
+              <img src="/captainamerica.png" alt="2nd Place" className="w-full h-full object-cover" onError={(e)=>{e.target.style.display='none'}} />
+              <span className="absolute text-2xl">🛡️</span>
+            </div>
+            
+            <div className="pt-10">
+              <span className="bg-slate-700 text-slate-200 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest border border-slate-400/40">
+                2nd Place • Silver Vanguard
+              </span>
+              <h3 className="title-font text-4xl font-black text-slate-300 mt-4 mb-2">₹7,000</h3>
+              <p className="text-gray-400 text-xs md:text-sm leading-relaxed">
+                Awarded to the runner-up squad demonstrating exceptional architectural design, tactical execution, and robust problem-solving in the multiverse.
+              </p>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="podium-card bg-gradient-to-b from-yellow-950/40 to-black border-2 border-yellow-500/60 rounded-2xl p-8 text-center relative shadow-[0_0_50px_rgba(234,179,8,0.3)] order-1 md:order-2 z-20"
+          >
+            <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 w-24 h-24 bg-yellow-900 rounded-full border-4 border-yellow-400 flex items-center justify-center shadow-[0_0_25px_rgba(234,179,8,0.8)] overflow-hidden">
+              <img src="/ironman.png" alt="1st Place" className="w-full h-full object-cover" onError={(e)=>{e.target.style.display='none'}} />
+              <span className="absolute text-3xl">🦾</span>
+            </div>
+
+            <div className="pt-12">
+              <span className="bg-yellow-500 text-black font-extrabold text-xs px-4 py-1.5 rounded-full uppercase tracking-widest shadow-[0_0_15px_rgba(234,179,8,0.8)]">
+                1st Place • Supreme Conqueror
+              </span>
+              <h3 className="title-font text-5xl font-black text-yellow-400 mt-4 mb-3">₹10,000</h3>
+              <p className="text-gray-300 text-xs md:text-sm leading-relaxed">
+                The ultimate grand prize for the supreme developers who master all infinity stones. Includes exclusive tech swags, cash bounties, and direct mentorship.
+              </p>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="podium-card bg-gradient-to-b from-amber-950/40 to-black border-2 border-amber-700/40 rounded-2xl p-6 text-center relative shadow-[0_0_30px_rgba(180,83,9,0.15)] order-3 md:order-3 mt-6 md:mt-24"
+          >
+            <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 w-20 h-20 bg-amber-900 rounded-full border-2 border-amber-600 flex items-center justify-center shadow-lg overflow-hidden">
+              <img src="/spiderman.png" alt="3rd Place" className="w-full h-full object-cover" onError={(e)=>{e.target.style.display='none'}} />
+              <span className="absolute text-2xl">🕸️</span>
+            </div>
+
+            <div className="pt-10">
+              <span className="bg-amber-900/80 text-amber-300 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest border border-amber-600/40">
+                3rd Place • Bronze Sentinel
+              </span>
+              <h3 className="title-font text-4xl font-black text-amber-500 mt-4 mb-2">₹5,000</h3>
+              <p className="text-gray-400 text-xs md:text-sm leading-relaxed">
+                Recognizing the brilliant minds who clinch the final podium spot with phenomenal innovation and relentless coding resilience under pressure.
+              </p>
+            </div>
+          </motion.div>
+
+        </div>
+      </div>
+    </section>
+  );
+};
+
 const Timeline = () => {
   const schedule = [
     { time: "09:00 AM", title: "Registration & Briefing", desc: "Agents arrive. ID verification and swag distribution." },
@@ -532,43 +658,50 @@ const Registration = () => {
   const [passcode, setPasscode] = useState('');
   const [passcodeError, setPasscodeError] = useState(false);
 
-  const verifyAndDownloadCSV = () => {
+  const verifyAndDownloadCSV = async () => {
     if (passcode !== "avengers2026") {
       setPasscodeError(true);
       return;
     }
 
-    const savedRegistrations = JSON.parse(localStorage.getItem('shield_registrations') || '[]');
-    if (savedRegistrations.length === 0) {
-      alert("No agent dossiers found in local database yet!");
-      return;
+    try {
+      const querySnapshot = await getDocs(collection(db, "shield_registrations"));
+      if (querySnapshot.empty) {
+        alert("No agent dossiers found in cloud database yet!");
+        return;
+      }
+
+      const headers = ["Pass ID", "Name", "Enrollment", "Email", "Timestamp"];
+      const csvRows = [headers.join(',')];
+
+      querySnapshot.forEach((docSnap) => {
+        const reg = docSnap.data();
+        csvRows.push([
+          reg.passId,
+          `"${reg.name}"`,
+          reg.enrollment,
+          reg.email,
+          `"${reg.timestamp}"`
+        ].join(','));
+      });
+
+      const csvBlob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(csvBlob);
+      const a = document.createElement('a');
+      a.setAttribute('href', url);
+      a.setAttribute('download', `Shield_Cloud_Agents_${new Date().toISOString().slice(0,10)}.csv`);
+      a.click();
+
+      setShowPasscodeModal(false);
+      setPasscode('');
+      setPasscodeError(false);
+    } catch (error) {
+      console.error("Error fetching cloud database:", error);
+      alert("Failed to access cloud database. Check Firebase rules.");
     }
-
-    const headers = ["Pass ID", "Name", "Enrollment", "Email", "Timestamp"];
-    const csvRows = [
-      headers.join(','),
-      ...savedRegistrations.map(reg => [
-        reg.passId,
-        `"${reg.name}"`,
-        reg.enrollment,
-        reg.email,
-        `"${reg.timestamp}"`
-      ].join(','))
-    ];
-
-    const csvBlob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(csvBlob);
-    const a = document.createElement('a');
-    a.setAttribute('href', url);
-    a.setAttribute('download', `Shield_Agents_${new Date().toISOString().slice(0,10)}.csv`);
-    a.click();
-
-    setShowPasscodeModal(false);
-    setPasscode('');
-    setPasscodeError(false);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name || !formData.enrollment || !formData.email) {
       alert("Please fill in all clearance fields.");
@@ -577,7 +710,7 @@ const Registration = () => {
 
     setIsSubmitting(true);
 
-    setTimeout(() => {
+    try {
       const generatedTicket = {
         passId: 'SHIELD-' + Math.floor(100000 + Math.random() * 900000),
         name: formData.name,
@@ -586,13 +719,15 @@ const Registration = () => {
         timestamp: new Date().toLocaleString()
       };
 
-      const existing = JSON.parse(localStorage.getItem('shield_registrations') || '[]');
-      existing.push(generatedTicket);
-      localStorage.setItem('shield_registrations', JSON.stringify(existing));
+      await addDoc(collection(db, "shield_registrations"), generatedTicket);
 
       setIsSubmitting(false);
       setTicket(generatedTicket);
-    }, 1500);
+    } catch (error) {
+      console.error("Error saving to Firestore: ", error);
+      alert("Registration failed! Check your Firebase configuration.");
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -612,7 +747,7 @@ const Registration = () => {
               className="bg-black/80 hover:bg-red-950/40 text-red-500 border border-red-600/40 font-mono text-xs px-5 py-3 rounded-lg transition uppercase tracking-wider flex items-center gap-2 shadow-[0_0_15px_rgba(236,29,36,0.2)]"
             >
               <Lock className="w-4 h-4 text-red-500" />
-              Director Database Access (CSV)
+              Director Database Access (Cloud CSV)
             </button>
           </div>
 
@@ -628,7 +763,7 @@ const Registration = () => {
                 </div>
                 <div>
                   <h3 className="title-font text-3xl text-white font-bold mb-1">SEAT CONFIRMED!</h3>
-                  <p className="text-red-400 text-xs font-mono uppercase tracking-widest">S.H.I.E.L.D. Security Clearance Granted</p>
+                  <p className="text-red-400 text-xs font-mono uppercase tracking-widest">S.H.I.E.L.D. Cloud Security Clearance Granted</p>
                 </div>
 
                 <div className="bg-black/60 border border-red-600/40 p-6 rounded-xl text-left font-mono space-y-3 relative overflow-hidden">
@@ -694,7 +829,7 @@ const Registration = () => {
                   {isSubmitting ? (
                     <>
                       <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      <span>ENCRYPTING DOSSIER...</span>
+                      <span>SYNCING TO CLOUD...</span>
                     </>
                   ) : (
                     <span>Submit Dossier & Generate Pass</span>
@@ -712,7 +847,7 @@ const Registration = () => {
             <h3 className="text-xl font-bold text-white mb-2 uppercase flex items-center gap-2">
               <Lock className="w-5 h-5 text-red-500" /> S.H.I.E.L.D. Clearance
             </h3>
-            <p className="text-gray-400 text-xs mb-6">Enter director passcode to download agent registration database.</p>
+            <p className="text-gray-400 text-xs mb-6">Enter director passcode to download cloud agent database.</p>
             
             <input
               type="password"
@@ -805,6 +940,7 @@ export default function App() {
         <main>
           <Hero />
           <Highlights />
+          <PrizesSection />
           <Timeline />
           <Registration />
         </main>
