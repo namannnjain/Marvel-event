@@ -282,8 +282,8 @@ const ScrollCharacters = () => {
   const spiderManY = useTransform(scrollYProgress, [0, 0.3, 0.7, 0.85], [100, 800, 2000, 3500]);
   const spiderManRotate = useTransform(scrollYProgress, [0, 0.3, 0.7, 0.85], [15, -25, 35, -10]);
 
-  const capX = useTransform(scrollYProgress, [0, 1], [200, 550]);
-  const capY = useTransform(scrollYProgress, [0, 1], [400, 2100]);
+  const capX = useTransform(scrollYProgress, [0, 1], [350, 750]);
+  const capY = useTransform(scrollYProgress, [0, 1], [400, 1200]);
 
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden z-25">
@@ -398,27 +398,34 @@ const Hero = () => {
   }, []);
 
   return (
-    <section className="relative w-full flex flex-col items-center text-center overflow-hidden pt-28 pb-16 px-6 bg-black">
+    <section className="relative w-full flex flex-col items-center text-center overflow-hidden pt-36 pb-16 px-6 bg-black">
+      {/* Background Image with back.jpg and balanced opacity/overlay for clear text */}
+      <div 
+        className="absolute inset-0 z-0 bg-cover bg-center opacity-45 pointer-events-none"
+        style={{ backgroundImage: `url('/back.jpg')` }}
+      />
+      <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/80 via-black/50 to-black pointer-events-none"></div>
+
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="bg-glow"></div>
         <div className="bg-glow-gold"></div>
       </div>
 
       <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center pt-8 space-y-6">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-600/20 border border-red-600/40 text-red-400 font-semibold text-xs md:text-sm animate-pulse backdrop-blur-md shadow-[0_0_20px_rgba(236,29,36,0.4)]">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-600/30 border border-red-600/60 text-red-300 font-semibold text-xs md:text-sm animate-pulse backdrop-blur-md shadow-[0_0_20px_rgba(236,29,36,0.6)]">
           <Zap className="w-4 h-4" />
           <span>S.H.I.E.L.D. APPROVED INITIATIVE</span>
         </div>
         
-        <h1 className="marvel-comic-font text-6xl md:text-8xl lg:text-9xl text-white tracking-wider drop-shadow-[0_5px_15px_rgba(236,29,36,0.7)]">
-          THE <span className="text-red-600">MULTIVERSE</span> OF CODE
+        <h1 className="marvel-comic-font text-6xl md:text-8xl lg:text-9xl text-white tracking-wider drop-shadow-[0_8px_25px_rgba(0,0,0,0.9)]">
+          THE <span className="text-red-600 drop-shadow-[0_0_25px_rgba(236,29,36,0.8)]">MULTIVERSE</span> OF CODE
         </h1>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center w-full pt-4">
           <a href="#register" className="marvel-btn group bg-red-600 text-white title-font px-8 py-4 text-base md:text-lg font-bold tracking-widest uppercase flex items-center justify-center gap-3 shadow-[0_0_25px_rgba(236,29,36,0.7)]">
             Secure Your Pass <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </a>
-          <a href="#highlights" className="marvel-btn bg-black/70 backdrop-blur-md border border-white/30 text-white title-font px-8 py-4 text-base md:text-lg font-bold tracking-widest uppercase hover:bg-white/20 flex items-center justify-center shadow-[0_0_20px_rgba(0,0,0,0.8)]">
+          <a href="#highlights" className="marvel-btn bg-black/80 backdrop-blur-md border border-white/30 text-white title-font px-8 py-4 text-base md:text-lg font-bold tracking-widest uppercase hover:bg-white/20 flex items-center justify-center shadow-[0_0_20px_rgba(0,0,0,0.8)]">
             View Protocol
           </a>
         </div>
