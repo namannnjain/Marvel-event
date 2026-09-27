@@ -29,8 +29,8 @@ class ErrorBoundary extends React.Component {
             <pre className="text-xs bg-black/80 p-4 rounded text-left overflow-x-auto text-red-400 mb-6 border border-red-900/50">
               {this.state.error?.toString()}
             </pre>
-            <button 
-              onClick={() => window.location.reload()} 
+            <button
+              onClick={() => window.location.reload()}
               className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded transition uppercase tracking-widest text-sm shadow-[0_0_15px_rgba(236,29,36,0.5)]"
             >
               Reboot System
@@ -47,7 +47,7 @@ class ErrorBoundary extends React.Component {
 // STYLES & ASSETS
 // ==========================================
 const customStyles = `
-  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&family=Oswald:wght@500;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Montserrat:wght@300;400;600;700;900&family=Oswald:wght@500;700&display=swap');
 
   :root {
     --marvel-red: #EC1D24;
@@ -70,6 +70,11 @@ const customStyles = `
   h1, h2, h3, .title-font {
     font-family: 'Oswald', sans-serif;
     text-transform: uppercase;
+  }
+
+  .marvel-comic-font {
+    font-family: 'Bangers', cursive, sans-serif;
+    letter-spacing: 3px;
   }
 
   .bg-glow {
@@ -104,7 +109,7 @@ const customStyles = `
   
   .marvel-card:hover {
     transform: translateY(-10px) scale(1.02);
-    box-shadow: 0 20px 40px -10px rgba(236, 29, 36, 0.3), 
+    box-shadow: 0 20px 40px -10px rgba(236, 29, 36, 0.3),
                 inset 0 0 0 1px rgba(236, 29, 36, 0.5);
   }
 
@@ -149,41 +154,67 @@ const customStyles = `
 // ==========================================
 
 const FuturisticIntro = ({ onComplete }) => {
-  const [started, setStarted] = useState(false);
+  const [phase, setPhase] = useState('idle');
 
   const handleInitialize = () => {
-    setStarted(true);
+    setPhase('animating');
     const audioEl = document.getElementById('bg-audio');
     if (audioEl) {
       audioEl.volume = 0.25;
       audioEl.play().catch(err => console.log("Audio play blocked:", err));
     }
+    
+    // Animation duration before white flash
     setTimeout(() => {
-      onComplete();
-    }, 3500);
+      setPhase('flashing'); // Trigger white flash screen
+      setTimeout(() => {
+        onComplete();
+      }, 600);
+    }, 2800);
   };
 
+  if (phase === 'flashing') {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="fixed inset-0 z-[9999] bg-white pointer-events-none"
+      />
+    );
+  }
+
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 1 }}
-      exit={{ opacity: 0, scale: 1.05 }}
-      transition={{ duration: 0.8, ease: "easeInOut" }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
       className="fixed inset-0 z-[100] bg-[#020202] flex flex-col items-center justify-center font-mono overflow-hidden p-6"
     >
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20">
-        <motion.div 
+      {/* Rotating Dials & Scanning Lines Background */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-30">
+        <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="w-[500px] h-[500px] rounded-full border border-dashed border-red-500"
-        />
-        <motion.div 
+          className="w-[500px] h-[500px] rounded-full border border-dashed border-red-500 flex items-center justify-center"
+        >
+          <div className="w-[420px] h-[420px] rounded-full border border-red-600/30"></div>
+        </motion.div>
+        <motion.div
           animate={{ rotate: -360 }}
           transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-          className="absolute w-[350px] h-[350px] rounded-full border border-red-600/50"
+          className="absolute w-[350px] h-[350px] rounded-full border border-red-600/60"
+        />
+        {/* Moving Laser Scan Line */}
+        <motion.div
+          animate={{ y: [-200, 200, -200] }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute w-[600px] h-[2px] bg-red-500 shadow-[0_0_15px_rgba(236,29,36,1)]"
         />
       </div>
 
-      {!started ? (
+      {phase === 'idle' && (
         <div className="relative z-30 text-center flex flex-col items-center max-w-lg">
           <div className="bg-red-600 px-8 py-3 shadow-[0_0_50px_rgba(236,29,36,0.8)] mb-6 border border-red-400">
             <span className="text-white title-font font-black text-5xl md:text-7xl tracking-tighter">GFG STUDIOS</span>
@@ -191,16 +222,18 @@ const FuturisticIntro = ({ onComplete }) => {
           <p className="text-gray-300 text-sm mb-8 tracking-widest uppercase">
             Click below to initialize protocols and establish secure audio link.
           </p>
-          <button 
+          <button
             onClick={handleInitialize}
             className="marvel-btn bg-red-600 hover:bg-red-700 text-white font-bold title-font px-8 py-4 text-xl tracking-widest uppercase shadow-[0_0_25px_rgba(236,29,36,0.8)] flex items-center gap-3"
           >
             <Zap className="w-5 h-5 animate-pulse" /> Initialize System & Audio
           </button>
         </div>
-      ) : (
+      )}
+
+      {phase === 'animating' && (
         <div className="relative z-30 text-center flex flex-col items-center">
-          <motion.div 
+          <motion.div
             initial={{ scale: 0.5, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.5 }}
@@ -208,14 +241,14 @@ const FuturisticIntro = ({ onComplete }) => {
           >
             <span className="text-white title-font font-black text-6xl md:text-8xl tracking-tighter">GFG STUDIOS</span>
           </motion.div>
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
             className="text-red-500 text-sm tracking-widest uppercase flex items-center gap-2"
           >
             <Terminal className="w-4 h-4 animate-spin" />
-            <span>WELCOME TO THE MULTIVERSE...</span>
+            <span>ESTABLISHING SECURE MULTIVERSE LINK...</span>
           </motion.div>
         </div>
       )}
@@ -226,48 +259,40 @@ const FuturisticIntro = ({ onComplete }) => {
 const ScrollCharacters = () => {
   const { scrollYProgress } = useScroll();
   
-  // Iron Man complex flight trajectory: swoops across screen, zig-zags around highlights, arrives at timeline, then flies off screen
-  const ironManX = useTransform(scrollYProgress, [0, 0.25, 0.5, 0.75, 1], [-100, 600, 50, 700, 1200]);
-  const ironManY = useTransform(scrollYProgress, [0, 0.25, 0.5, 0.75, 1], [400, 900, 1600, 2400, 3200]);
-  const ironManRotate = useTransform(scrollYProgress, [0, 0.25, 0.5, 0.75, 1], [-15, 35, -25, 45, 90]);
+  const ironManX = useTransform(scrollYProgress, [0, 0.25, 0.5, 0.7, 0.85], [-100, 600, 50, 700, 700]);
+  const ironManY = useTransform(scrollYProgress, [0, 0.25, 0.5, 0.7, 0.85], [400, 900, 1600, 2400, 3500]);
+  const ironManRotate = useTransform(scrollYProgress, [0, 0.25, 0.5, 0.7, 0.85], [-15, 35, -25, 45, 90]);
 
-  // Spider-Man swings across from right to left smoothly on scroll
-  const spiderManX = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [800, 100, 600, -200]);
-  const spiderManY = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [100, 800, 2000, 3000]);
-  const spiderManRotate = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [15, -25, 35, -10]);
+  const spiderManX = useTransform(scrollYProgress, [0, 0.3, 0.7, 0.85], [800, 100, 600, 600]);
+  const spiderManY = useTransform(scrollYProgress, [0, 0.3, 0.7, 0.85], [100, 800, 2000, 3500]);
+  const spiderManRotate = useTransform(scrollYProgress, [0, 0.3, 0.7, 0.85], [15, -25, 35, -10]);
 
-  // Captain America leaps
   const capX = useTransform(scrollYProgress, [0, 1], [200, 600]);
   const capY = useTransform(scrollYProgress, [0, 1], [400, 1200]);
 
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden z-25">
-      {/* Iron Man Flight Trajectory */}
-      <motion.div 
+      <motion.div
         style={{ x: ironManX, y: ironManY, rotate: ironManRotate }}
         className="absolute left-0 top-0 w-48 md:w-64"
       >
-        <img 
-          src="/ironman.png" 
-          alt="Iron Man Flying" 
+        <img
+          src="/ironman.png"
+          alt="Iron Man Flying"
           className="w-full drop-shadow-[0_15px_30px_rgba(236,29,36,0.8)] object-contain"
           onError={(e) => e.target.style.display = 'none'}
         />
       </motion.div>
 
-      {/* Spider-Man Swings */}
-      <motion.div 
+      <motion.div
         style={{ x: spiderManX, y: spiderManY, rotate: spiderManRotate }}
         className="absolute right-0 top-0 w-48 md:w-64 z-30"
       >
-        <img 
-          src="/spiderman.png" 
-          alt="Spider-Man Swinging" 
+        <img
+          src="/spiderman.png"
+          alt="Spider-Man Swinging"
           className="w-full drop-shadow-[0_15px_30px_rgba(59,130,246,0.9)] object-contain"
-          onError={(e) => {
-            // Fallback SVG if spiderman.png is missing
-            e.target.style.display = 'none';
-          }}
+          onError={(e) => { e.target.style.display = 'none'; }}
         />
         <svg viewBox="0 0 200 200" className="w-full h-full fill-none">
           <path d="M200 0 L100 100" stroke="#38bdf8" strokeWidth="2" strokeDasharray="4 4" />
@@ -280,14 +305,13 @@ const ScrollCharacters = () => {
         </svg>
       </motion.div>
 
-      {/* Captain America */}
-      <motion.div 
+      <motion.div
         style={{ x: capX, y: capY }}
         className="absolute left-1/4 top-1/3 w-44 md:w-60"
       >
-        <img 
-          src="/captainamerica.png" 
-          alt="Captain America Action" 
+        <img
+          src="/captainamerica.png"
+          alt="Captain America Action"
           className="w-full drop-shadow-[0_15px_30px_rgba(234,179,8,0.7)] object-contain"
           onError={(e) => e.target.style.display = 'none'}
         />
@@ -309,7 +333,7 @@ const Navbar = () => {
 
   return (
     <nav className={`fixed w-full z-50 transition-all duration-300 ${
-      scrolled ? 'bg-black/80 backdrop-blur-md py-3 border-b border-white/10' : 'bg-transparent py-5'
+      scrolled ? 'bg-black/90 backdrop-blur-md py-3 border-b border-white/10' : 'bg-black/80 py-5 border-b border-white/5'
     }`}>
       <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
         <div className="flex items-center gap-3">
@@ -336,8 +360,8 @@ const Navbar = () => {
           </a>
         </div>
 
-        <a 
-          href="#register" 
+        <a
+          href="#register"
           className="marvel-btn bg-white text-black title-font px-6 py-2 font-bold tracking-wider hover:bg-red-600 hover:text-white uppercase"
         >
           Assemble
@@ -348,48 +372,64 @@ const Navbar = () => {
 };
 
 const Hero = () => {
+  const [currentBg, setCurrentBg] = useState(0);
+  const heroBackgrounds = ['/Bg1.png', '/Bg2.png', '/Bg3.png', '/Bg4.png', '/Bg5.png'];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentBg((prev) => (prev + 1) % heroBackgrounds.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-      <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/80 to-transparent"></div>
-        <div className="absolute inset-0 bg-gradient-to-b from-[#050505] via-transparent to-[#050505]"></div>
+    <section className="relative w-full flex flex-col items-center text-center overflow-hidden pt-28 pb-16 px-6 bg-black">
+      <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="bg-glow"></div>
         <div className="bg-glow-gold"></div>
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 flex flex-col items-center text-center">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-600/10 border border-red-600/30 text-red-500 font-semibold text-sm mb-8 animate-pulse">
+      <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center pt-8 space-y-6">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-600/20 border border-red-600/40 text-red-400 font-semibold text-xs md:text-sm animate-pulse backdrop-blur-md shadow-[0_0_20px_rgba(236,29,36,0.4)]">
           <Zap className="w-4 h-4" />
-          <span>CLASSIFIED EVENT ALIVE • S.H.I.E.L.D APPROVED</span>
+          <span>S.H.I.E.L.D. APPROVED INITIATIVE</span>
         </div>
         
-        <h1 className="title-font text-6xl md:text-8xl lg:text-9xl font-black text-white leading-none tracking-tighter mb-4 drop-shadow-2xl">
-          THE <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-red-700">MULTIVERSE</span>
-          <br/> OF CODE
+        <h1 className="marvel-comic-font text-6xl md:text-8xl lg:text-9xl text-white tracking-wider drop-shadow-[0_5px_15px_rgba(236,29,36,0.7)]">
+          THE <span className="text-red-600">MULTIVERSE</span> OF CODE
         </h1>
-        
-        <p className="max-w-2xl text-gray-400 text-lg md:text-xl mb-10 leading-relaxed">
-          Earth's mightiest developers unite. Dive into Web3, AI, and competitive programming. The GeeksForGeeks Student Chapter calls upon you to defend the digital realm.
-        </p>
-        
-        <div className="flex flex-col sm:flex-row gap-5">
-          <a href="#register" className="marvel-btn group bg-red-600 text-white title-font px-8 py-4 text-xl font-bold tracking-widest uppercase flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(236,29,36,0.4)]">
+
+        <div className="flex flex-col sm:flex-row gap-4 justify-center w-full pt-4">
+          <a href="#register" className="marvel-btn group bg-red-600 text-white title-font px-8 py-4 text-base md:text-lg font-bold tracking-widest uppercase flex items-center justify-center gap-3 shadow-[0_0_25px_rgba(236,29,36,0.7)]">
             Secure Your Pass <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </a>
-          <a href="#highlights" className="marvel-btn bg-transparent border border-white/20 text-white title-font px-8 py-4 text-xl font-bold tracking-widest uppercase hover:bg-white/5 flex items-center justify-center">
+          <a href="#highlights" className="marvel-btn bg-black/70 backdrop-blur-md border border-white/30 text-white title-font px-8 py-4 text-base md:text-lg font-bold tracking-widest uppercase hover:bg-white/20 flex items-center justify-center shadow-[0_0_20px_rgba(0,0,0,0.8)]">
             View Protocol
           </a>
         </div>
+      </div>
 
-        <div className="mt-20 flex items-center gap-8 text-gray-500 text-sm font-semibold tracking-widest">
-          <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-red-500" />
-            <span>NOV 10-12, 2026</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-red-500" />
-            <span>BENNETT UNIVERSITY</span>
-          </div>
+      <div className="relative z-10 w-full max-w-6xl h-64 md:h-96 rounded-2xl overflow-hidden border border-white/20 shadow-[0_0_50px_rgba(0,0,0,0.9)] my-10">
+        {heroBackgrounds.map((bg, idx) => (
+          <div
+            key={idx}
+            className={`absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ease-in-out ${
+              idx === currentBg ? 'opacity-90 scale-105' : 'opacity-0 scale-100'
+            }`}
+            style={{ backgroundImage: `url("${bg}")`, transition: 'opacity 1s ease-in-out, transform 4s ease-in-out' }}
+          />
+        ))}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30"></div>
+      </div>
+
+      <div className="relative z-10 flex items-center gap-8 text-gray-200 text-xs md:text-sm font-semibold tracking-widest bg-black/80 backdrop-blur-md px-6 py-3 rounded-xl border border-white/20 shadow-[0_0_25px_rgba(0,0,0,0.9)]">
+        <div className="flex items-center gap-2">
+          <Calendar className="w-4 h-4 text-red-500" />
+          <span>NOV 10-12, 2026</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <MapPin className="w-4 h-4 text-red-500" />
+          <span>BENNETT UNIVERSITY</span>
         </div>
       </div>
     </section>
@@ -398,26 +438,10 @@ const Hero = () => {
 
 const Highlights = () => {
   const features = [
-    {
-      title: "Algorithmic Warfare",
-      desc: "Battle through intense competitive programming rounds. Optimize your code to survive the snap.",
-      color: "from-red-900/40 to-black"
-    },
-    {
-      title: "AI Infinity Stones",
-      desc: "Harness the power of neural networks and machine learning to build intelligent, self-aware systems.",
-      color: "from-amber-900/40 to-black"
-    },
-    {
-      title: "Cyber Shield",
-      desc: "Defend against dark web threats. Learn cryptography and ethical hacking from the masters.",
-      color: "from-blue-900/40 to-black"
-    },
-    {
-      title: "Web3 Multiverse",
-      desc: "Step into the decentralized web. Build smart contracts and master blockchain technology.",
-      color: "from-purple-900/40 to-black"
-    }
+    { title: "Algorithmic Warfare", desc: "Battle through intense competitive programming rounds. Optimize your code to survive the snap.", color: "from-red-900/40 to-black" },
+    { title: "AI Infinity Stones", desc: "Harness the power of neural networks and machine learning to build intelligent, self-aware systems.", color: "from-amber-900/40 to-black" },
+    { title: "Cyber Shield", desc: "Defend against dark web threats. Learn cryptography and ethical hacking from the masters.", color: "from-blue-900/40 to-black" },
+    { title: "Web3 Multiverse", desc: "Step into the decentralized web. Build smart contracts and master blockchain technology.", color: "from-purple-900/40 to-black" }
   ];
 
   return (
@@ -435,10 +459,7 @@ const Highlights = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {features.map((feat, idx) => (
-            <div 
-              key={idx} 
-              className={`marvel-card relative p-8 rounded-xl bg-gradient-to-br ${feat.color} border border-white/10 overflow-hidden group cursor-pointer`}
-            >
+            <div key={idx} className={`marvel-card relative p-8 rounded-xl bg-gradient-to-br ${feat.color} border border-white/10 overflow-hidden group cursor-pointer`}>
               <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               <div className="relative z-10">
                 <h4 className="title-font text-xl font-bold text-white mb-3 tracking-wide">{feat.title}</h4>
@@ -507,12 +528,10 @@ const Registration = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [ticket, setTicket] = useState(null);
 
-  // Passcode protection state for CSV download
   const [showPasscodeModal, setShowPasscodeModal] = useState(false);
   const [passcode, setPasscode] = useState('');
   const [passcodeError, setPasscodeError] = useState(false);
 
-  // Function to download registrations as CSV with Passcode Verification
   const verifyAndDownloadCSV = () => {
     if (passcode !== "avengers2026") {
       setPasscodeError(true);
@@ -588,7 +607,7 @@ const Registration = () => {
               Registration is now open for Bennett University students. Form your squad and prepare for the ultimate test of skill.
             </p>
 
-            <button 
+            <button
               onClick={() => setShowPasscodeModal(true)}
               className="bg-black/80 hover:bg-red-950/40 text-red-500 border border-red-600/40 font-mono text-xs px-5 py-3 rounded-lg transition uppercase tracking-wider flex items-center gap-2 shadow-[0_0_15px_rgba(236,29,36,0.2)]"
             >
@@ -599,7 +618,7 @@ const Registration = () => {
 
           <div className="bg-[#0a0a0a] p-8 md:p-10 rounded-2xl border border-white/10 shadow-2xl relative">
             {ticket ? (
-              <motion.div 
+              <motion.div
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 className="text-center space-y-6"
@@ -621,8 +640,8 @@ const Registration = () => {
                   <div className="text-xs text-gray-400">ENROLLMENT: <span className="text-white font-bold">{ticket.enrollment}</span></div>
                 </div>
 
-                <button 
-                  onClick={() => setTicket(null)} 
+                <button
+                  onClick={() => setTicket(null)}
                   className="w-full marvel-btn bg-white text-black title-font py-3 font-bold tracking-widest uppercase hover:bg-red-600 hover:text-white transition"
                 >
                   Register Another Agent
@@ -633,42 +652,42 @@ const Registration = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Codename (Full Name)</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       required
                       value={formData.name}
                       onChange={(e) => setFormData({...formData, name: e.target.value})}
-                      className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-red-500" 
-                      placeholder="Tony Stark" 
+                      className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-red-500"
+                      placeholder="Tony Stark"
                     />
                   </div>
                   <div className="space-y-2">
                     <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Enrollment No.</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       required
                       value={formData.enrollment}
                       onChange={(e) => setFormData({...formData, enrollment: e.target.value})}
-                      className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-red-500" 
-                      placeholder="E23XXXX" 
+                      className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-red-500"
+                      placeholder="E23XXXX"
                     />
                   </div>
                 </div>
                 
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Comms Link (Email)</label>
-                  <input 
-                    type="email" 
+                  <input
+                    type="email"
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({...formData, email: e.target.value})}
-                    className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-red-500" 
-                    placeholder="tony@starkindustries.com" 
+                    className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-red-500"
+                    placeholder="tony@starkindustries.com"
                   />
                 </div>
 
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   disabled={isSubmitting}
                   className="w-full marvel-btn bg-red-600 text-white title-font py-4 font-bold tracking-widest uppercase mt-4 flex items-center justify-center gap-2"
                 >
@@ -695,11 +714,11 @@ const Registration = () => {
             </h3>
             <p className="text-gray-400 text-xs mb-6">Enter director passcode to download agent registration database.</p>
             
-            <input 
+            <input
               type="password"
               value={passcode}
               onChange={(e) => { setPasscode(e.target.value); setPasscodeError(false); }}
-              placeholder="Enter Passcode..." 
+              placeholder="Enter Passcode..."
               className="w-full bg-black/80 border border-white/20 rounded-lg px-4 py-3 text-white mb-4 focus:outline-none focus:border-red-500 text-sm"
             />
 
@@ -708,13 +727,13 @@ const Registration = () => {
             )}
 
             <div className="flex gap-4">
-              <button 
+              <button
                 onClick={verifyAndDownloadCSV}
                 className="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg uppercase tracking-wider text-xs transition shadow-[0_0_15px_rgba(236,29,36,0.5)]"
               >
                 Authenticate & Download
               </button>
-              <button 
+              <button
                 onClick={() => { setShowPasscodeModal(false); setPasscode(''); setPasscodeError(false); }}
                 className="bg-gray-800 hover:bg-gray-700 text-gray-300 font-bold py-3 px-5 rounded-lg uppercase tracking-wider text-xs transition"
               >
@@ -766,7 +785,7 @@ export default function App() {
       <audio id="bg-audio" ref={audioRef} src="/multi.mp3" loop preload="auto" />
 
       {/* Floating Audio Control Button */}
-      <button 
+      <button
         onClick={toggleAudio}
         className="fixed bottom-6 left-6 z-50 bg-black/80 hover:bg-red-600 text-white p-3 rounded-full border border-red-600/50 shadow-[0_0_15px_rgba(236,29,36,0.5)] transition duration-300 flex items-center justify-center"
         title={isMuted ? "Unmute Audio" : "Mute Audio"}
