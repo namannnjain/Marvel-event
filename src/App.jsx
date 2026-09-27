@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
-import { Shield, Zap, Terminal, Calendar, MapPin, Users, ChevronRight, AlertTriangle, Cpu, Globe, CheckCircle2, Award, Lock, Volume2, VolumeX, Trophy } from 'lucide-react';
+import { Shield, Zap, Terminal, Calendar, MapPin, Users, ChevronRight, AlertTriangle, Cpu, Globe, CheckCircle2, Award, Lock, Volume2, VolumeX } from 'lucide-react';
 
 // ==========================================
-// FIREBASE CONFIGURATION (Direct from your console)
+// FIREBASE CONFIGURATION
 // ==========================================
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
@@ -129,15 +129,6 @@ const customStyles = `
     transform: translateY(-10px) scale(1.02);
     box-shadow: 0 20px 40px -10px rgba(236, 29, 36, 0.3),
                 inset 0 0 0 1px rgba(236, 29, 36, 0.5);
-  }
-
-  .podium-card {
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  }
-  .podium-card:hover {
-    transform: translateY(-10px) scale(1.02);
-    box-shadow: 0 20px 40px -10px rgba(234, 179, 8, 0.4),
-                inset 0 0 0 1px rgba(234, 179, 8, 0.6);
   }
 
   .marvel-btn {
@@ -374,16 +365,12 @@ const Navbar = () => {
             INITIATIVE
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-red-600 transition-all duration-300 group-hover:w-full"></span>
           </a>
-          <a href="#prizes" className="text-yellow-400 hover:text-yellow-300 transition-colors duration-200 relative group py-1 font-bold">
-            PRIZES 🏆
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-yellow-500 transition-all duration-300 group-hover:w-full"></span>
+          <a href="#register" className="text-gray-300 hover:text-red-500 transition-colors duration-200 relative group py-1">
+            DOSSIER
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-red-600 transition-all duration-300 group-hover:w-full"></span>
           </a>
           <a href="#schedule" className="text-gray-300 hover:text-red-500 transition-colors duration-200 relative group py-1">
             TIMELINE
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-red-600 transition-all duration-300 group-hover:w-full"></span>
-          </a>
-          <a href="#register" className="text-gray-300 hover:text-red-500 transition-colors duration-200 relative group py-1">
-            DOSSIER
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-red-600 transition-all duration-300 group-hover:w-full"></span>
           </a>
         </div>
@@ -495,104 +482,6 @@ const Highlights = () => {
               </div>
             </div>
           ))}
-        </div>
-      </div>
-    </section>
-  );
-};
-
-const PrizesSection = () => {
-  return (
-    <section id="prizes" className="py-24 relative z-10 bg-[#060606] border-t border-white/5 font-mono">
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        <div className="bg-glow-gold"></div>
-      </div>
-      
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <div className="text-center mb-16 space-y-4">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 font-semibold text-xs md:text-sm animate-pulse backdrop-blur-md">
-            <Trophy className="w-4 h-4 text-yellow-400" />
-            <span>INFINITY STONES OF VICTORY • REWARDS REPOSITORY</span>
-          </div>
-          <h2 className="marvel-comic-font text-5xl md:text-7xl text-yellow-500 tracking-wider drop-shadow-[0_0_20px_rgba(234,179,8,0.6)]">
-            HALL OF <span className="text-white">CHAMPIONS</span>
-          </h2>
-          <p className="text-gray-400 max-w-xl mx-auto text-sm">
-            He who conquers the multiverse claims ultimate glory and bountiful rewards. Inspect the elite prize tiers below.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-5xl mx-auto items-end my-8">
-          
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="podium-card bg-gradient-to-b from-gray-900 to-black border-2 border-slate-400/40 rounded-2xl p-6 text-center relative shadow-[0_0_30px_rgba(148,163,184,0.15)] order-2 md:order-1 mt-6 md:mt-16"
-          >
-            <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 w-20 h-20 bg-slate-800 rounded-full border-2 border-slate-400 flex items-center justify-center shadow-lg overflow-hidden">
-              <img src="/captainamerica.png" alt="2nd Place" className="w-full h-full object-cover" onError={(e)=>{e.target.style.display='none'}} />
-              <span className="absolute text-2xl">🛡️</span>
-            </div>
-            
-            <div className="pt-10">
-              <span className="bg-slate-700 text-slate-200 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest border border-slate-400/40">
-                2nd Place • Silver Vanguard
-              </span>
-              <h3 className="title-font text-4xl font-black text-slate-300 mt-4 mb-2">₹7,000</h3>
-              <p className="text-gray-400 text-xs md:text-sm leading-relaxed">
-                Awarded to the runner-up squad demonstrating exceptional architectural design, tactical execution, and robust problem-solving in the multiverse.
-              </p>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="podium-card bg-gradient-to-b from-yellow-950/40 to-black border-2 border-yellow-500/60 rounded-2xl p-8 text-center relative shadow-[0_0_50px_rgba(234,179,8,0.3)] order-1 md:order-2 z-20"
-          >
-            <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 w-24 h-24 bg-yellow-900 rounded-full border-4 border-yellow-400 flex items-center justify-center shadow-[0_0_25px_rgba(234,179,8,0.8)] overflow-hidden">
-              <img src="/ironman.png" alt="1st Place" className="w-full h-full object-cover" onError={(e)=>{e.target.style.display='none'}} />
-              <span className="absolute text-3xl">🦾</span>
-            </div>
-
-            <div className="pt-12">
-              <span className="bg-yellow-500 text-black font-extrabold text-xs px-4 py-1.5 rounded-full uppercase tracking-widest shadow-[0_0_15px_rgba(234,179,8,0.8)]">
-                1st Place • Supreme Conqueror
-              </span>
-              <h3 className="title-font text-5xl font-black text-yellow-400 mt-4 mb-3">₹10,000</h3>
-              <p className="text-gray-300 text-xs md:text-sm leading-relaxed">
-                The ultimate grand prize for the supreme developers who master all infinity stones. Includes exclusive tech swags, cash bounties, and direct mentorship.
-              </p>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="podium-card bg-gradient-to-b from-amber-950/40 to-black border-2 border-amber-700/40 rounded-2xl p-6 text-center relative shadow-[0_0_30px_rgba(180,83,9,0.15)] order-3 md:order-3 mt-6 md:mt-24"
-          >
-            <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 w-20 h-20 bg-amber-900 rounded-full border-2 border-amber-600 flex items-center justify-center shadow-lg overflow-hidden">
-              <img src="/spiderman.png" alt="3rd Place" className="w-full h-full object-cover" onError={(e)=>{e.target.style.display='none'}} />
-              <span className="absolute text-2xl">🕸️</span>
-            </div>
-
-            <div className="pt-10">
-              <span className="bg-amber-900/80 text-amber-300 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest border border-amber-600/40">
-                3rd Place • Bronze Sentinel
-              </span>
-              <h3 className="title-font text-4xl font-black text-amber-500 mt-4 mb-2">₹5,000</h3>
-              <p className="text-gray-400 text-xs md:text-sm leading-relaxed">
-                Recognizing the brilliant minds who clinch the final podium spot with phenomenal innovation and relentless coding resilience under pressure.
-              </p>
-            </div>
-          </motion.div>
-
         </div>
       </div>
     </section>
@@ -940,7 +829,6 @@ export default function App() {
         <main>
           <Hero />
           <Highlights />
-          <PrizesSection />
           <Timeline />
           <Registration />
         </main>
