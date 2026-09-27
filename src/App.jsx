@@ -152,6 +152,19 @@ const customStyles = `
     left: 100%;
   }
 
+  .tech-input {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .tech-input:hover {
+    border-color: rgba(236, 29, 36, 0.5);
+    box-shadow: 0 0 10px rgba(236, 29, 36, 0.2);
+  }
+  .tech-input:focus {
+    border-color: #EC1D24;
+    box-shadow: 0 0 20px rgba(236, 29, 36, 0.4), inset 0 0 5px rgba(236, 29, 36, 0.2);
+    transform: translateY(-2px);
+  }
+
   ::-webkit-scrollbar {
     width: 8px;
   }
@@ -282,8 +295,14 @@ const ScrollCharacters = () => {
   const spiderManY = useTransform(scrollYProgress, [0, 0.3, 0.7, 0.85], [100, 800, 2000, 3500]);
   const spiderManRotate = useTransform(scrollYProgress, [0, 0.3, 0.7, 0.85], [15, -25, 35, -10]);
 
+  // Captain America
   const capX = useTransform(scrollYProgress, [0, 1], [350, 750]);
   const capY = useTransform(scrollYProgress, [0, 1], [400, 1200]);
+
+  // Batman position: Starting X shifted 200px right (800), End X exact same (40)
+  const batmanX = useTransform(scrollYProgress, [0.6, 0.88], [800, 40]);
+  const batmanY = useTransform(scrollYProgress, [0.6, 0.88], [1600, 2550]);
+  const batmanRotate = useTransform(scrollYProgress, [0.6, 0.88], [15, 0]);
 
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden z-25">
@@ -331,6 +350,18 @@ const ScrollCharacters = () => {
           onError={(e) => e.target.style.display = 'none'}
         />
       </motion.div>
+
+      <motion.div
+        style={{ x: batmanX, y: batmanY, rotate: batmanRotate }}
+        className="absolute left-0 top-0 w-72 md:w-96 z-35"
+      >
+        <img
+          src="/batman.png"
+          alt="Batman Action"
+          className="w-full drop-shadow-[0_0_35px_rgba(59,130,246,0.95)] filter brightness-95 object-contain"
+          onError={(e) => { e.target.style.display = 'none'; }}
+        />
+      </motion.div>
     </div>
   );
 };
@@ -352,9 +383,12 @@ const Navbar = () => {
     }`}>
       <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
         <div className="flex items-center gap-3">
-          <div className="bg-red-600 text-white font-bold title-font px-2 py-1 text-xl tracking-tighter shadow-[0_0_15px_rgba(236,29,36,0.6)]">
-            GFG
-          </div>
+          <img
+            src="/logo.png"
+            alt="GFG Logo"
+            className="h-9 w-auto object-contain drop-shadow-[0_0_10px_rgba(236,29,36,0.6)]"
+            onError={(e) => { e.target.style.display = 'none'; }}
+          />
           <span className="text-white font-bold tracking-widest text-sm uppercase hidden sm:block border-l border-white/20 pl-3">
             Bennett University
           </span>
@@ -398,8 +432,8 @@ const Hero = () => {
   }, []);
 
   return (
-    <section className="relative w-full flex flex-col items-center text-center overflow-hidden pt-36 pb-16 px-6 bg-black">
-      {/* Background Image with back.jpg and balanced opacity/overlay for clear text */}
+    <section className="relative w-full flex flex-col items-center text-center overflow-hidden pt-28 pb-16 px-6 bg-black">
+      {/* Background Image with back.jpg */}
       <div 
         className="absolute inset-0 z-0 bg-cover bg-center opacity-45 pointer-events-none"
         style={{ backgroundImage: `url('/back.jpg')` }}
@@ -638,13 +672,20 @@ const Registration = () => {
               Registration is now open for Bennett University students. Form your squad and prepare for the ultimate test of skill.
             </p>
 
-            <button
-              onClick={() => setShowPasscodeModal(true)}
-              className="bg-black/80 hover:bg-red-950/40 text-red-500 border border-red-600/40 font-mono text-xs px-5 py-3 rounded-lg transition uppercase tracking-wider flex items-center gap-2 shadow-[0_0_15px_rgba(236,29,36,0.2)]"
-            >
-              <Lock className="w-4 h-4 text-red-500" />
-              Director Database Access (Cloud CSV)
-            </button>
+            <div className="space-y-3">
+              <button
+                onClick={() => setShowPasscodeModal(true)}
+                className="bg-black/80 hover:bg-red-950/40 text-red-500 border border-red-600/40 font-mono text-xs px-5 py-3 rounded-lg transition uppercase tracking-wider flex items-center gap-2 shadow-[0_0_15px_rgba(236,29,36,0.2)]"
+              >
+                <Lock className="w-4 h-4 text-red-500" />
+                Director Database Access (Cloud CSV)
+              </button>
+              {/* Added Passcode Note for Selection Reviewers */}
+              <p className="text-xs font-mono text-gray-400 tracking-wide flex items-center gap-1.5 pl-1">
+                <span className="text-red-500 font-bold">🔐 Passcode for evaluators:</span> 
+                <code className="bg-red-950/40 text-red-300 px-2 py-0.5 rounded border border-red-600/30">avengers2026</code>
+              </p>
+            </div>
           </div>
 
           <div className="bg-[#0a0a0a] p-8 md:p-10 rounded-2xl border border-white/10 shadow-2xl relative">
@@ -662,7 +703,7 @@ const Registration = () => {
                   <p className="text-red-400 text-xs font-mono uppercase tracking-widest">S.H.I.E.L.D. Cloud Security Clearance Granted</p>
                 </div>
 
-                <div className="bg-black/60 border border-red-600/40 p-6 rounded-xl text-left font-mono space-y-3 relative overflow-hidden">
+                <div className="bg-black/60 border border-red-600/40 p-6 rounded-xl text-left font-mono space-y-3 relative overflow-hidden shadow-[0_0_25px_rgba(236,29,36,0.2)]">
                   <div className="absolute top-0 right-0 bg-red-600 text-white text-[10px] px-3 py-1 uppercase font-bold tracking-widest">
                     Verified Agent
                   </div>
@@ -673,7 +714,7 @@ const Registration = () => {
 
                 <button
                   onClick={() => setTicket(null)}
-                  className="w-full marvel-btn bg-white text-black title-font py-3 font-bold tracking-widest uppercase hover:bg-red-600 hover:text-white transition"
+                  className="w-full marvel-btn bg-white text-black title-font py-3 font-bold tracking-widest uppercase hover:bg-red-600 hover:text-white transition shadow-[0_0_15px_rgba(255,255,255,0.4)]"
                 >
                   Register Another Agent
                 </button>
@@ -688,7 +729,7 @@ const Registration = () => {
                       required
                       value={formData.name}
                       onChange={(e) => setFormData({...formData, name: e.target.value})}
-                      className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-red-500"
+                      className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none tech-input"
                       placeholder="Tony Stark"
                     />
                   </div>
@@ -699,7 +740,7 @@ const Registration = () => {
                       required
                       value={formData.enrollment}
                       onChange={(e) => setFormData({...formData, enrollment: e.target.value})}
-                      className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-red-500"
+                      className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none tech-input"
                       placeholder="E23XXXX"
                     />
                   </div>
@@ -712,7 +753,7 @@ const Registration = () => {
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({...formData, email: e.target.value})}
-                    className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-red-500"
+                    className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none tech-input"
                     placeholder="tony@starkindustries.com"
                   />
                 </div>
@@ -720,7 +761,7 @@ const Registration = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full marvel-btn bg-red-600 text-white title-font py-4 font-bold tracking-widest uppercase mt-4 flex items-center justify-center gap-2"
+                  className="w-full marvel-btn bg-red-600 hover:bg-red-700 text-white title-font py-4 font-bold tracking-widest uppercase mt-4 flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(236,29,36,0.6)] hover:shadow-[0_0_30px_rgba(236,29,36,0.9)] transition-all duration-300"
                 >
                   {isSubmitting ? (
                     <>
@@ -750,7 +791,7 @@ const Registration = () => {
               value={passcode}
               onChange={(e) => { setPasscode(e.target.value); setPasscodeError(false); }}
               placeholder="Enter Passcode..."
-              className="w-full bg-black/80 border border-white/20 rounded-lg px-4 py-3 text-white mb-4 focus:outline-none focus:border-red-500 text-sm"
+              className="w-full bg-black/80 border border-white/20 rounded-lg px-4 py-3 text-white mb-4 focus:outline-none focus:border-red-500 text-sm tech-input"
             />
 
             {passcodeError && (
